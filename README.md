@@ -78,6 +78,7 @@ borg_repositories:
   - name: "home-backup"
     repository: "/path/to/borg/repo"
     passphrase: "your-passphrase"  # Optional, can use BORG_PASSPHRASE env var
+    calculate_sizes: true  # Optional: calculate archive sizes (default: true)
 ```
 
 ### S3 Buckets
@@ -178,8 +179,25 @@ The HTML email report includes:
   - Source (Borg repository or S3 bucket name)
   - Entry name (archive name or object key)
   - Timestamp (UTC)
-  - Size (formatted for S3 objects, N/A for Borg archives)
+  - Size (formatted for both S3 objects and Borg archives when enabled)
   - Type (borg_archive or s3_object)
+
+### Borg Archive Size Calculation
+
+The script can calculate the total size of each Borg archive by recursively scanning mounted directories. This helps identify:
+
+- Unusually small backups (potential incomplete backups)
+- Unusually large backups (potential data bloat)
+- Size trends over time
+
+**Performance Note**: Size calculation can be time-consuming for large archives. You can disable it per repository:
+
+```yaml
+borg_repositories:
+  - name: "large-backup"
+    repository: "/path/to/large/repo"
+    calculate_sizes: false  # Skip size calculation for faster processing
+```
 
 ## Webhook Notifications
 

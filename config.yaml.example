@@ -19,9 +19,11 @@ borg_repositories:
   - name: "home-backup"
     repository: "/path/to/borg/repo"
     passphrase: "your-borg-passphrase"
+    calculate_sizes: true  # Optional: calculate archive sizes (can be slow for large archives)
 
   - name: "server-backup"
     repository: "user@server:/path/to/borg/repo"
+    calculate_sizes: false  # Skip size calculation for faster processing
     # passphrase can also be set via BORG_PASSPHRASE environment variable
 
 # S3 buckets to monitor

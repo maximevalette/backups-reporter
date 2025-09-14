@@ -64,6 +64,7 @@ class BorgRepository:
         self.name = config['name']
         self.repository = config['repository']
         self.passphrase = config.get('passphrase')
+        self.calculate_sizes = config.get('calculate_sizes', True)
         self.mount_point = None
 
     def mount(self) -> bool:
@@ -99,6 +100,37 @@ class BorgRepository:
             except Exception as e:
                 logging.error(f"Error unmounting Borg repository {self.name}: {e}")
 
+    def _calculate_directory_size(self, directory_path: Path) -> int:
+        """Calculate the total size of a directory recursively."""
+        total_size = 0
+        file_count = 0
+
+        try:
+            # Use os.walk for better performance on large directories
+            import os
+            for root, dirs, files in os.walk(directory_path):
+                for file in files:
+                    try:
+                        file_path = os.path.join(root, file)
+                        file_size = os.path.getsize(file_path)
+                        total_size += file_size
+                        file_count += 1
+
+                        # Log progress every 10000 files for very large archives
+                        if file_count % 10000 == 0:
+                            logging.info(f"Processed {file_count:,} files, current size: {total_size:,} bytes")
+
+                    except (OSError, PermissionError):
+                        # Skip files that can't be accessed
+                        continue
+
+            logging.info(f"Archive scan complete: {file_count:,} files, total size: {total_size:,} bytes")
+
+        except Exception as e:
+            logging.warning(f"Error calculating size for {directory_path}: {e}")
+
+        return total_size
+
     def list_archives(self, limit: int = 10) -> List[BackupEntry]:
         if not self.mount_point:
             return []
@@ -108,11 +140,19 @@ class BorgRepository:
             for item in Path(self.mount_point).iterdir():
                 if item.is_dir():
                     stat = item.stat()
+
+                    # Conditionally calculate directory size
+                    archive_size = None
+                    if self.calculate_sizes:
+                        logging.info(f"Calculating size for Borg archive: {item.name}")
+                        archive_size = self._calculate_directory_size(item)
+                        logging.info(f"Archive {item.name} size: {archive_size} bytes")
+
                     entries.append(BackupEntry(
                         source=f"borg:{self.name}",
                         name=item.name,
                         timestamp=datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc),
-                        size=None,
+                        size=archive_size,
                         type="borg_archive"
                     ))
 
