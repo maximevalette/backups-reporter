@@ -16,7 +16,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application files
-COPY backup_reporter.py .
+COPY backups_reporter.py .
 
 # Create non-root user
 RUN useradd --create-home --shell /bin/bash app \
@@ -26,5 +26,5 @@ RUN useradd --create-home --shell /bin/bash app \
 USER app
 
 # Set entrypoint
-ENTRYPOINT ["python", "backup_reporter.py"]
+ENTRYPOINT ["python", "backups_reporter.py"]
 CMD ["config.yaml"]

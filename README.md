@@ -112,7 +112,7 @@ email:
 ### Command Line
 
 ```bash
-python backup_reporter.py config.yaml
+python backups_reporter.py config.yaml
 ```
 
 ### Docker
@@ -153,10 +153,10 @@ Add to your crontab for regular reports:
 
 ```bash
 # Daily at 6 AM
-0 6 * * * /usr/bin/python3 /path/to/backup_reporter.py /path/to/config.yaml
+0 6 * * * /usr/bin/python3 /path/to/backups_reporter.py /path/to/config.yaml
 
 # Weekly on Sunday at 8 AM
-0 8 * * 0 /usr/bin/python3 /path/to/backup_reporter.py /path/to/config.yaml
+0 8 * * 0 /usr/bin/python3 /path/to/backups_reporter.py /path/to/config.yaml
 ```
 
 ## Environment Variables
