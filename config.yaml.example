@@ -1,0 +1,58 @@
+# Backups Reporter Configuration Example
+
+# Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+log_level: INFO
+
+# Maximum number of entries to include in the report from all sources combined
+max_total_entries: 100
+
+# Number of entries to fetch from each individual source
+entries_per_source: 20
+
+# Webhooks for notifications (compatible with healthchecks.io)
+webhooks:
+  - "https://hc-ping.com/your-uuid-here"
+  - "https://your-custom-webhook.com/backups-reporter"
+
+# Borg repositories to monitor
+borg_repositories:
+  - name: "home-backup"
+    repository: "/path/to/borg/repo"
+    passphrase: "your-borg-passphrase"
+
+  - name: "server-backup"
+    repository: "user@server:/path/to/borg/repo"
+    # passphrase can also be set via BORG_PASSPHRASE environment variable
+
+# S3 buckets to monitor
+s3_buckets:
+  - name: "production-backups"
+    bucket: "my-backup-bucket"
+    prefix: "backups/"  # Optional: only list objects with this prefix
+    region: "us-east-1"
+    # Credentials can be provided here or via AWS CLI/env variables
+    access_key: "your-access-key"
+    secret_key: "your-secret-key"
+
+  - name: "database-dumps"
+    bucket: "db-backups"
+    region: "eu-west-1"
+    # Using AWS CLI credentials or IAM role
+
+  - name: "minio-backup"
+    bucket: "backup-bucket"
+    endpoint_url: "https://minio.example.com"
+    access_key: "minio-access-key"
+    secret_key: "minio-secret-key"
+
+# Email configuration
+email:
+  smtp_server: "smtp.gmail.com"
+  smtp_port: 587
+  use_tls: true
+  username: "your-email@gmail.com"
+  password: "your-app-password"  # Use app-specific password for Gmail
+  from_email: "backups-reporter@yourcompany.com"
+  to_emails:
+    - "admin@yourcompany.com"
+    - "backups-alerts@yourcompany.com"

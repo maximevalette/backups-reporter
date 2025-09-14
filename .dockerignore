@@ -1,0 +1,11 @@
+.git
+.github
+README.md
+config.yaml
+*.pyc
+__pycache__
+.pytest_cache
+.coverage
+.env
+.venv
+venv/
