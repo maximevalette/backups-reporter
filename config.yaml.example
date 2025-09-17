@@ -24,6 +24,8 @@ borg_repositories:
   - name: "server-backup"
     repository: "user@server:/path/to/borg/repo"
     calculate_sizes: false  # Skip size calculation for faster processing
+    ssh_strict_host_key_checking: false  # Disable for easier setup (not recommended for production)
+    # ssh_known_hosts_file: "/path/to/known_hosts"  # Optional: specify known hosts file
     # passphrase can also be set via BORG_PASSPHRASE environment variable
 
 # S3 buckets to monitor

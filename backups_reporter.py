@@ -65,6 +65,8 @@ class BorgRepository:
         self.repository = config['repository']
         self.passphrase = config.get('passphrase')
         self.calculate_sizes = config.get('calculate_sizes', True)
+        self.ssh_strict_host_key_checking = config.get('ssh_strict_host_key_checking', False)
+        self.ssh_known_hosts_file = config.get('ssh_known_hosts_file')
         self.mount_point = None
 
     def mount(self) -> bool:
@@ -74,6 +76,19 @@ class BorgRepository:
             env = os.environ.copy()
             if self.passphrase:
                 env['BORG_PASSPHRASE'] = self.passphrase
+
+            # Configure SSH options for remote repositories
+            if self.repository.startswith(('ssh://', 'user@')):
+                ssh_options = []
+
+                if not self.ssh_strict_host_key_checking:
+                    ssh_options.extend(['-o', 'StrictHostKeyChecking=no'])
+                    ssh_options.extend(['-o', 'UserKnownHostsFile=/dev/null'])
+                elif self.ssh_known_hosts_file:
+                    ssh_options.extend(['-o', f'UserKnownHostsFile={self.ssh_known_hosts_file}'])
+
+                if ssh_options:
+                    env['BORG_RSH'] = f"ssh {' '.join(ssh_options)}"
 
             cmd = ['borg', 'mount', self.repository, self.mount_point]
             result = subprocess.run(cmd, env=env, capture_output=True, text=True, timeout=300)

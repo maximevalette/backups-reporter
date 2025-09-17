@@ -79,6 +79,11 @@ borg_repositories:
     repository: "/path/to/borg/repo"
     passphrase: "your-passphrase"  # Optional, can use BORG_PASSPHRASE env var
     calculate_sizes: true  # Optional: calculate archive sizes (default: true)
+
+  - name: "remote-backup"
+    repository: "ssh://user@server/path/to/repo"
+    ssh_strict_host_key_checking: false  # For easier setup (not recommended for production)
+    # ssh_known_hosts_file: "/path/to/known_hosts"  # Alternative: specify known hosts file
 ```
 
 ### S3 Buckets
