@@ -302,15 +302,22 @@ class EmailReporter:
 
         for entry in entries:
             source_class = 'borg' if entry.source.startswith('borg:') else 's3'
-            html += f"""
+            html += """
                     <tr>
-                        <td class="{source_class}">{entry.source}</td>
-                        <td>{entry.name}</td>
-                        <td class="timestamp">{entry.timestamp.strftime('%Y-%m-%d %H:%M:%S')}</td>
-                        <td class="size">{format_size(entry.size)}</td>
-                        <td>{entry.type}</td>
+                        <td class="{source_class}">{source}</td>
+                        <td>{name}</td>
+                        <td class="timestamp">{timestamp}</td>
+                        <td class="size">{size}</td>
+                        <td>{entry_type}</td>
                     </tr>
-            """
+            """.format(
+                source_class=source_class,
+                source=entry.source,
+                name=entry.name,
+                timestamp=entry.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+                size=format_size(entry.size),
+                entry_type=entry.type
+            )
 
         html += """
                 </tbody>
