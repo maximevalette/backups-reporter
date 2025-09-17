@@ -388,13 +388,20 @@ class BackupsReporter:
 
 
 def main():
-    if len(sys.argv) != 2:
-        print("Usage: backup_reporter.py <config_file>")
+    # Default config file path
+    default_config = "config.yaml"
+
+    if len(sys.argv) > 2:
+        print("Usage: backups_reporter.py [config_file]")
+        print("If no config file is specified, 'config.yaml' will be used.")
         sys.exit(1)
 
-    config_file = sys.argv[1]
+    config_file = sys.argv[1] if len(sys.argv) == 2 else default_config
+
     if not os.path.exists(config_file):
         print(f"Config file not found: {config_file}")
+        if config_file == default_config:
+            print("Create a config.yaml file or specify a different config file path.")
         sys.exit(1)
 
     try:
