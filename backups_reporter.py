@@ -282,16 +282,16 @@ class EmailReporter:
             <meta charset="utf-8">
             <title>Backups Report</title>
             <style>
-                body { font-family: Arial, sans-serif; margin: 20px; }
-                h1 { color: #333; }
-                table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-                th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-                th { background-color: #f2f2f2; font-weight: bold; }
-                tr:nth-child(even) { background-color: #f9f9f9; }
-                .borg { color: #0066cc; }
-                .s3 { color: #ff6600; }
-                .timestamp { font-family: monospace; }
-                .size { text-align: right; }
+                body {{ font-family: Arial, sans-serif; margin: 20px; }}
+                h1 {{ color: #333; }}
+                table {{ border-collapse: collapse; width: 100%; margin-top: 20px; }}
+                th, td {{ border: 1px solid #ddd; padding: 12px; text-align: left; }}
+                th {{ background-color: #f2f2f2; font-weight: bold; }}
+                tr:nth-child(even) {{ background-color: #f9f9f9; }}
+                .borg {{ color: #0066cc; }}
+                .s3 {{ color: #ff6600; }}
+                .timestamp {{ font-family: monospace; }}
+                .size {{ text-align: right; }}
             </style>
         </head>
         <body>
