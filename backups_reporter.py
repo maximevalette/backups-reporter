@@ -152,27 +152,34 @@ class BorgRepository:
 
         entries = []
         try:
+            # First pass: collect all archives with basic info (no size calculation)
             for item in Path(self.mount_point).iterdir():
                 if item.is_dir():
                     stat = item.stat()
-
-                    # Conditionally calculate directory size
-                    archive_size = None
-                    if self.calculate_sizes:
-                        logging.info(f"Calculating size for Borg archive: {item.name}")
-                        archive_size = self._calculate_directory_size(item)
-                        logging.info(f"Archive {item.name} size: {archive_size} bytes")
-
                     entries.append(BackupEntry(
                         source=f"borg:{self.name}",
                         name=item.name,
                         timestamp=datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc),
-                        size=archive_size,
+                        size=None,  # Will calculate later only for limited entries
                         type="borg_archive"
                     ))
 
+            # Sort by timestamp and limit to most recent
             entries.sort(key=lambda x: x.timestamp, reverse=True)
-            return entries[:limit]
+            limited_entries = entries[:limit]
+
+            # Second pass: calculate sizes only for the limited entries
+            if self.calculate_sizes:
+                logging.info(f"Calculating sizes for {len(limited_entries)} most recent archives out of {len(entries)} total")
+                for entry in limited_entries:
+                    # Find the corresponding directory
+                    archive_path = Path(self.mount_point) / entry.name
+                    if archive_path.is_dir():
+                        logging.info(f"Calculating size for Borg archive: {entry.name}")
+                        entry.size = self._calculate_directory_size(archive_path)
+                        logging.info(f"Archive {entry.name} size: {entry.size} bytes")
+
+            return limited_entries
         except Exception as e:
             logging.error(f"Error listing archives from Borg repository {self.name}: {e}")
             return []
